@@ -1,0 +1,34 @@
+@model DemoVolunteer.Models.UserViewModel
+@{
+    ViewData["Title"] = "Edit";
+}
+<h2>Edit</h2>
+
+<form asp-controller="User" asp-action="Edit" method="post">
+    <div>
+        <label asp-for="FirstName">FirstName</label>
+        <input value="@Model.FirstName" asp-for="FirstName"/>
+    </div>
+        <label asp-for="LastName">LastName</label>
+        <input value="@Model.LastName" asp-for="LastName"/>
+    <div>
+        <label asp-for="Gender">Gender</label>
+        <input value="@Model.Gender" asp-for="Gender"/>
+    </div>
+        <label asp-for="Email">Email</label>
+        <input  value="@Model.Email" asp-for="Email" readonly="true"/>
+    <div>
+        <label asp-for="UserName">UserName</label>
+        <input value="@Model.UserName" asp-for="UserName" readonly="true"/>
+    </div>
+
+    <div>
+        <label asp-for="PhoneNumber">PhoneNumber</label>
+        <input value="@Model.PhoneNumber" asp-for="PhoneNumber"/>
+    </div>
+    
+    <button type="submit">Save</button>
+</form>
+
+
+}

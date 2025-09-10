@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Register";
+}
+<h2>Register</h2>
+
+<form asp-controller="User" method="POST" asp-action="Register">
+    <input type="text" name="firstName" placeholder="First Name" required />
+    <input type="text" name="lastName" placeholder="Last Name" required />
+    <input type="text" name="gender" placeholder="gender" required />
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="password" name="password" placeholder="Password" required />
+    @* <input type="password" name="confirmPassword" placeholder="confirm password" required /> *@
+    <input type="tel" name="phoneNumber" placeholder="phone number" required />
+    
+    <button type="submit">Register</button>
+</form>

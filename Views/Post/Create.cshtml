@@ -1,0 +1,46 @@
+@model List<DemoVolunteer.Models.Category>
+
+@* @model YourProject.Models.Post *@
+
+
+@{
+    ViewData["Title"] = "New Post";
+}
+
+
+<h2>รายการประเภท</h2>
+<hr>
+<form asp-controller="Post" method="POST" asp-action="Create">
+    <label for="title">ชื่อหัวเรือง</label>
+    <input type="text" name="title" placeholder="title" required />
+
+    <label for="category">เลือกประเภท:</label>
+    <select name="category">
+        @foreach (var category in Model){
+            <option value=@category.CategoryId>@category.Name</option>
+        }
+    </select>
+
+    <label for="location">สถาที่นัดหมาย:</label>
+    <input type="text" name="location" placeholder="location" required />
+
+    <label for="category">จำนวนที่รับ:</label>
+    <input type="number" name="location" placeholder="location" required />
+
+    <label for="date">วันที่นัด:</label>
+    <input type="date" name="date" placeholder="date" required />
+
+    <label for="timestart">เริ่มเวลา:</label>
+    <input type="time" name="timestart" placeholder="time" required />
+
+    <label for="timeend">จบที่เวลา:</label>
+    <input type="time" name="timeend" placeholder="time" required />
+
+    <label for="score">จำนวนชั่วโมง:</label>
+    <input type="number" name="score" placeholder="score" required />
+
+    <label for="img">อัปโหลดรูปภาพ:</label>
+    <input type="file" name="imgFile" placeholder="score" required />
+
+    <button type="submit">Register</button>
+</form>

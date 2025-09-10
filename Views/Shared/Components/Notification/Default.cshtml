@@ -1,0 +1,12 @@
+@model List<Notification>
+
+@if (Model == null || Model.Count == 0){
+   <p>ไม่มีการแจ้งเตือน</p> 
+}else{
+    @foreach (var notify in Model){
+        <p>
+            @notify.Message
+            @notify.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+        </p>
+    }
+}
