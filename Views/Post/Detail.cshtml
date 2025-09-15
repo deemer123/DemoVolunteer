@@ -1,0 +1,19 @@
+@model DemoVolunteer.Models.Post
+
+<img src="@Model.ImgURL" alt="post-pic" width="500px">
+<h1>@Model.Title</h1>
+<p>สถานที่ :@Model.Location</p>
+<p>เวลากิจกรรม :@Model.AppointmentDate.ToString("dd MMM yyyy") เวลา @Model.TimeStart.ToString("hh:mm tt") - @Model.TimeEnd.ToString("hh:mm tt")</p>
+<p>ชั่วโมงกิจกรรม :@Model.Score</p>
+<p>ประเภทกิจกรรม :@Model.Category.Name</p>
+<p>ผู้จัด : :@Model.Owner.FullName</p>
+<p>ติดต่อ : :@Model.Owner.PhoneNumber</p>
+
+<hr>
+
+<h2>เปิดรับ @Model.Joins.Count/@Model.MaxParticipants</h2>
+
+<p>รายละเอียดกิจกรมม</p>
+<p>@Model.Description</p>
+
+<button>เข้าร่วมจิตอาสา</button>

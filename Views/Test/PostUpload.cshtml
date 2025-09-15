@@ -1,6 +1,6 @@
 @model DemoVolunteer.Models.Post
 
-<form method="POST" asp-action="Create" asp-controller="Post" enctype="multipart/form-data">
+<form method="POST" asp-action="PostUpload" asp-controller="Test" enctype="multipart/form-data">
     <label for="title" >ชื่อหัวเรือง</label>
     <input asp-for="Title" type="text" name="title" placeholder="title"  />
 
@@ -41,7 +41,7 @@
     <input type="file" id="imageInput" accept="image/*" name="imageFile"/>
     <img id="preview" src="/img/default-post-image.png" alt="Image Preview" width="500" height="600" style="display: block;">
 
-    <button type="submit">สร้างโพส</button>
+    <button type="submit">Register</button>
 </form>
 
 <script>

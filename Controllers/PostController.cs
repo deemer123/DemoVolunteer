@@ -16,64 +16,150 @@ namespace MyMvcProject.Controllers
             _context = context;
             _userManager = userManager;
         }
-        
-        // GET: Category/Create
+
+        // การสร้างหน้า Create Post
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
             var categories = await _context.Categories.ToListAsync();
-            return View(categories);
+            ViewBag.categories = categories;
+            //ส่งข้อมูล Categories ไปที่ View ผ่าน ViewBag
+            ViewBag.Categories = _context.Categories.ToList();
+            return View();
         }
-        
-        
-        // public async Task<IActionResult> Index()
-        // {
-        // var user = await _userManager.FindByIdAsync("f7df1a85-e291-4ee7-9a70-840111923b52");
-        // var categorie = await _context.Categories.FindAsync(1);
-        // if (user == null)
-        // {
-        //     return Content("not found user");
-        // }
-        // if (categorie.CategoryId == null)
-        // {
-        //     return Content("categoriesID not found");
-        // }
-        // var post = new Post
-        // {
-        //     Title = "My Group ทำบุญตักบาต",
-        //     OwnerId = user.Id,
-        //     CategoryId = categorie.CategoryId,
-        //     Description = "loerm 55sade kdsajiowdjskaljds",
-        //     Location = "bankok",
-        //     MaxParticipants = 20,
-        //     AppointmentDate = DateTime.Today,
-        //     Score = 5,
-        //     Status = "Open",
-        // };
+
+        // รับข้อมูลจาก Form และ newPost ลงใน DB
+        [HttpPost]
+        public async Task<IActionResult> Create(Post model, IFormFile imageFile)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (model == null || imageFile == null || user == null)
+            {
+                return Content("Model is null");
+            }
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                // ตั้งชื่อไฟล์เอง เช่น ใช้ชื่อจาก Model หรือเวลาปัจจุบัน
+                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                var customFileName = $"{user.Id}_" + timestamp + Path.GetExtension(imageFile.FileName);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", customFileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await imageFile.CopyToAsync(stream);
+                }
+                // กำหนด ImgURL ใน Model เป็น path สำหรับแสดงภาพ
+                model.ImgURL = "/img/" + customFileName;
+            }
+            // บันทึก model ลง DB หรือทำงานต่อ
+            var post = new Post
+            {
+                Title = model.Title,
+                OwnerId = user.Id,
+                CategoryId = model.CategoryId,
+                Description = model.Description,
+                Location = model.Location,
+                MaxParticipants = model.MaxParticipants,
+                AppointmentDate = model.AppointmentDate,
+                TimeStart = model.TimeStart,
+                TimeEnd = model.TimeEnd,
+                Score = model.Score,
+                Status = "Open",
+                ImgURL = model.ImgURL,
+                CreatedAt = DateTime.Now
+            };
+            _context.Posts.Add(post);
+            await _context.SaveChangesAsync();
+            return Redirect("/Home/Index");
+        }
+
+        // แสดงรายละเอียดของ post
+        [HttpGet]
+        public async Task<IActionResult> Detail(int postId)
+        {
+            var post = await _context.Posts
+            .Include(p => p.Owner)
+            .Include(p => p.Category)
+            .Include(p => p.Joins)
+            .FirstOrDefaultAsync(p => p.PostId == postId);
+            return View(post);
+        }
+
+        // แก้ไขข้อมูล post
+        [HttpGet]
+        public async Task<IActionResult> Edit(int postId)
+        {
+            return Content("");
+        }
+
+        // ขอเข้าร่วมกิจกรรม (ยังไม่ได้ลอง Test!!)
+        [HttpPost]
+        public async Task<IActionResult> Join(int postId)
+        {
+            // ตรวจสอบว่า user ได้ login เข้ามาไหม?
+            if (!(User?.Identity != null && User.Identity.IsAuthenticated))
+            {
+                //ไม่ได้ Login
+                ModelState.AddModelError("", "Login First");
+                return RedirectToAction("Login", "User");
+            }
+            // user ได้ login และดึง user model
+            var user = await _userManager.GetUserAsync(User);
+            // ดึงรายการเดียวตาม PostId
+            var post = await _context.Posts
+                .Include(p => p.Owner)
+                .FirstOrDefaultAsync(p => p.PostId == postId);
+            // ตรวจสอบว่า userID Login ตรง กับ postOwnerID รึเปล่า?
+            if (post.Owner.Id == user.Id)
+            {
+                ModelState.AddModelError("", "You Can't Join Your Post");
+                return View();
+            }
+            // สร้าง new Join model ลงบน DB
+            var join = new Join
+            {
+                UserId = user.Id,
+                PostId = postId
+            };
+            return View();
+        }
+
+        //หน้าจัดการโพสของฉัน
+        public async Task<IActionResult> Manager()
+        {
+            // ตรวจสอบว่า user ได้ login เข้ามาไหม?
+            if (!(User?.Identity != null && User.Identity.IsAuthenticated))
+            {
+                //ไม่ได้ Login
+                ModelState.AddModelError("", "Login First");
+                return RedirectToAction("Login", "User");
+            }
+            var user = await _userManager.GetUserAsync(User);
+            var posts = await _context.Posts
+                .Include(p => p.Joins)
+                .Where(p => p.Owner.Id == user.Id)
+                .ToListAsync();
+            return View(posts);
+        }
 
 
-        // _context.Posts.Add(post);
-        // await _context.SaveChangesAsync();
 
 
-        // var posts = await _context.Categories
-        //     .Include(c => c.Posts)
-        //     .Where(c => c.IsActive)
-        //     .ToListAsync();
-        // var Posts = await _context.
+
+        //-------------------------------------------------------------------------------
+        // [HttpGet]
+        // public async Task<IActionResult> GetPostByUserid(int id, string category)
+        // {
+        //     var user = await _userManager.GetUserAsync(User);
+        //     var categories = await _context.Posts
+        //         .Include(c => c.Owner)
+        //         .Where(c => c.OwnerId == user.Id)
+        //         .ToListAsync();
+        //     // ใช้ค่าที่รับมา
+        //     ViewBag.ProductId = id;
+        //     ViewBag.Category = category;
         //     return View();
         // }
 
-        // // GET: Category
-        // public async Task<IActionResult> Index()
-        // {
-        //     var categories = await _context.Categories
-        //         .Include(c => c.Products)
-        //         .Where(c => c.IsActive)
-        //         .OrderBy(c => c.Name)
-        //         .ToListAsync();
-
-        //     return View(categories);
-        // }
 
         // // GET: Category/Details/5
         // public async Task<IActionResult> Details(int? id)
@@ -125,6 +211,8 @@ namespace MyMvcProject.Controllers
         //     }
         //     return View(category);
         // }
+
+
 
         // // POST: Category/Edit/5
         // [HttpPost]

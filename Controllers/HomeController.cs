@@ -29,9 +29,36 @@ public class HomeController : Controller
             ViewBag.PhoneNumber = user.PhoneNumber;
             ViewBag.Email = user.Email;
         }
-        return View();
+
+        // var categories = await _context.Categories.ToListAsync();
+        // ViewBag.categories = categories;
+
+        //ส่งข้อมูล Categories ไปที่ View ผ่าน ViewBag
+        ViewBag.Categories = _context.Categories.ToList();
+        var posts = await _context.Posts
+            .Include(p => p.Owner)
+            .ToListAsync();
+        return View(posts);
     }
 
+    
+    public async Task<IActionResult> Post(int categorieId)
+    {
+        if (User.Identity.IsAuthenticated)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            ViewBag.FullName = user.FullName;
+            ViewBag.Gender = user.Gender;
+            ViewBag.PhoneNumber = user.PhoneNumber;
+            ViewBag.Email = user.Email;
+        }
+        ViewBag.Categories = _context.Categories.ToList();
+        var posts = await _context.Posts
+            .Include(p => p.Owner)
+            .Where(p => p.CategoryId == categorieId)
+            .ToListAsync();
+        return View(posts);
+    }
 
     public IActionResult Privacy()
     {

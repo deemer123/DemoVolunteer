@@ -25,9 +25,14 @@ public class UserController : Controller
     [HttpGet]
     public IActionResult Register() => View();
     [HttpPost]
-    public async Task<IActionResult> Register(string firstName, string lastName, string email, string password, string gender, string phoneNumber)
+    public async Task<IActionResult> Register(string firstName, string lastName, string email, string password, string confirmPassword, string gender, string phoneNumber)
     {
-        Console.WriteLine("Register Method Post Worked");
+        if (password != confirmPassword)
+        {
+            ModelState.AddModelError("", "Passwords do not match");
+            return View();
+        }
+
         var user = new ApplicationUser
         {
             UserName = email,
@@ -38,19 +43,17 @@ public class UserController : Controller
             LastName = lastName
         };
         var result = await _userManager.CreateAsync(user, password);
-        foreach (var error in result.Errors)
-        {
-            Console.WriteLine($"Error!! {error.Description}");
-        }
         if (result.Succeeded)
         {
             // await _signInManager.SignInAsync(user, false);
-            return RedirectToAction("Index", "Home");
+            ViewBag.Message = "สมัครสมาชิกสำเร็จแล้ว! ตอนนี้คุณสามารถเข้าสู่ระบบได้";
+            return View();
         }
-
         foreach (var error in result.Errors)
-            ModelState.AddModelError("", error.Description);
-
+        {
+            // แสดง error ที่ view
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
         return View();
     }
 
@@ -64,8 +67,10 @@ public class UserController : Controller
     {
         var result = await _signInManager.PasswordSignInAsync(email, password, false, false);
         if (result.Succeeded)
+        {
             return RedirectToAction("Index", "Home");
-
+        }
+        // กรณี login ไม่สำเร็จ
         ModelState.AddModelError("", "Invalid login attempt");
         return View();
     }
@@ -85,11 +90,13 @@ public class UserController : Controller
     [HttpGet]
     public async Task<IActionResult> Edit()
     {
+        // ดึงข้อมูลของ user ที่ login
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
             return RedirectToAction("Login", "User");
         }
+        //สร้าง instance ของ model และส่งไปยัง view
         var model = new UserViewModel
         {
             FirstName = user.FirstName,
@@ -99,11 +106,10 @@ public class UserController : Controller
             Email = user.Email,
             PhoneNumber = user.PhoneNumber
         };
+        // ใช้ ViewBag ส่งค่าไปที่ view ก็ได้
         // ViewBag.FirstName = user.FirstName;
         // ViewBag.LastName = user.LastName;
-        // ViewBag.gender = user.Gender;
-        // ViewBag.Email = user.Email;
-        // ViewBag.phoneNumber = user.PhoneNumber;
+
         return View(model);
     }
 
@@ -116,7 +122,6 @@ public class UserController : Controller
         Console.WriteLine($"{model.PhoneNumber}");
         Console.WriteLine($"{model.Email}");
         Console.WriteLine($"{model.UserName}");
-        // Console.WriteLine($"{ModelState.IsValid.ToString()}");
         // if (!ModelState.IsValid) return View(model);
         if (!ModelState.IsValid)
         {
