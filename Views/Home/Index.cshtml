@@ -2,37 +2,98 @@
     ViewData["Title"] = "Home Page";
 }
 
-@if (User?.Identity != null && User.Identity.IsAuthenticated)
-{
-    <h3>Hello, @ViewBag.FullName!</h3>
-    <p>Gender @ViewBag.Gender</p>
-    <p>PhoneNumber @ViewBag.phoneNumber</p>
-    <p>Email @ViewBag.Email</p>
-}
-else
-{
-    <span>Hello, Guest</span>
-}
+<link rel="stylesheet" href="~/css/index.css" />
+
+<main class="main">
+    <div class="content">
+
+        <!-- for title -->
+        <div class="layer1">
+            <img style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; overflow: hidden;"
+                src="https://s.imgz.io/2025/09/08/download-1f4108ab663ec19eb.png" alt="picture">
+            <div class="text1">
+                <h1>มาปันสุข</h1>
+                <p>มาปันสุขให้กับสังคมไทยให้ สดใจ กัน.. <br>
+                    หากคุณคือ “อาสา”</p>
+            </div>
+        </div>
+        <!-- for activity -->
+        <div class="layer2" style="display: flex;">
+            <hr class="line">
+            <h2 class="title2">กิจกรรมจิตอาสาที่เปิดรับ</h2>
+            <hr class="line">
+        </div>
+        <!-- for search -->
+        <div class="search-container">
+            <input type="text" placeholder="ค้นหางานกิจกรรม" class="search-input">
+            <button class="search-button" style="display: flex; align-items: center; color: black;">ค้นหา</button>
+        </div>
+        <!-- for select activity -->
+
+        <div class="selectbutton">
+            @foreach (var category in @ViewBag.Categories)
+            {
+                <button class="button2"><a href="/Home/Post?categorieId=@category.CategoryId">@category.Name</a></button>
+            }
+        </div>
+
+        @* all post *@
+        @model List<DemoVolunteer.Models.Post>
+        <div class="showactivity">
+            @foreach (var post in Model)
+            {
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="activity">
+                        <img src="@post.ImgURL" width="100px" alt="volunteer">
+                        <h4>@post.Title</h4>
+                        <p>สถานที่: @post.Location <br>วันที่: @post.AppointmentDate.ToString("d MMM yyyy", new
+                                                System.Globalization.CultureInfo("th-TH")) <br>เวลา: @post.TimeStart.ToString("HH:MM") -
+                    @post.TimeEnd.ToString("HH:MM") น. <br>ผู้จัด:
+                    @post.Owner.FullName </p>
+                <div>
+                    <button>เข้าร่วม</button>
+                </div>
+            </div>
+                        }
+                else
+                {
+                    <div class="activity">
+                        <img src="@post.ImgURL" width="100px" alt="volunteer">
+                        <h4>@post.Title</h4>
+                        <p>สถานที่: @post.Location <br>วันที่: @post.AppointmentDate.ToString("d MMM yyyy", new
+                                                System.Globalization.CultureInfo("th-TH")) <br>เวลา: @post.TimeStart.ToString("HH:MM") -
+                    @post.TimeEnd.ToString("HH:MM") น. <br>ผู้จัด:
+                    @post.Owner.FullName </p>
+                <div>
+                    <button><a asp-controller="User" asp-action="Login">เข้าร่วม</a></button>
+                </div>
+            </div>
+                        }
+            }
+
+            @* next pages *@
+        </div>
+        <div class="slidepage">
+            <button id="slider-button-left" class="swiper-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 12 16 16" fill="none">
+                    <path d="M10.0002 11.9999L6 7.99971L10.0025 3.99719" stroke="currentColor" stroke-width="1.6"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <h2>1</h2>
+            <h2>2</h2>
+            <h2>...</h2>
+            <h2>6</h2>
+            <button id="slider-button-right" class="swiper-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 12 16 16" fill="none">
+                    <path d="M5.99984 4.00012L10 8.00029L5.99748 12.0028" stroke="currentColor" stroke-width="1.6"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    </div>
 
 
-<h2>เลือกหมวดหมู่</h2>
-<div>
-    <a href="/Home">ทั้งหมด</a>
-    @foreach (var category in @ViewBag.Categories){
-        <a href="/Home/Post?categorieId=@category.CategoryId">@category.Name</a>
-    }
-</div>
-
-<hr />
-
-@model List<DemoVolunteer.Models.Post>
-<h3>รายการสินค้า</h3>
-<ul>
-@foreach (var post in Model)
-{
-    <li>ชื่อ @post.Title - สถานที่ @post.Location - เจ้าของโพส @post.Owner.FullName</li>
-    <img src="@post.ImgURL" width="100px">
-    <a href="/Post/Detail?postId=@post.PostId">ลายละเอียด</a>
-    <hr>
-}
-</ul>
+</main>
