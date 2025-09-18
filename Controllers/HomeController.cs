@@ -19,7 +19,7 @@ public class HomeController : Controller
         _userManager = userManager; // ใช้ _userManager ดึงข้อมูล user        
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int? categorieId)
     {
         if (User.Identity.IsAuthenticated)
         {
@@ -35,30 +35,38 @@ public class HomeController : Controller
 
         //ส่งข้อมูล Categories ไปที่ View ผ่าน ViewBag
         ViewBag.Categories = _context.Categories.ToList();
-        var posts = await _context.Posts
-            .Include(p => p.Owner)
-            .ToListAsync();
+        IQueryable<Post> query = _context.Posts.Include(p => p.Owner);
+
+
+        if (categorieId.HasValue)
+        {
+            query = query.Where(p => p.CategoryId == categorieId.Value);
+            ViewBag.SelectedCategoryId = categorieId.Value;
+        }
+
+        var posts = await query.ToListAsync();
         return View(posts);
+
     }
 
-    
-    public async Task<IActionResult> Post(int categorieId)
-    {
-        if (User.Identity.IsAuthenticated)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            ViewBag.FullName = user.FullName;
-            ViewBag.Gender = user.Gender;
-            ViewBag.PhoneNumber = user.PhoneNumber;
-            ViewBag.Email = user.Email;
-        }
-        ViewBag.Categories = _context.Categories.ToList();
-        var posts = await _context.Posts
-            .Include(p => p.Owner)
-            .Where(p => p.CategoryId == categorieId)
-            .ToListAsync();
-        return View(posts);
-    }
+
+    // public async Task<IActionResult> Post(int categorieId)
+    // {
+    //     if (User.Identity.IsAuthenticated)
+    //     {
+    //         var user = await _userManager.GetUserAsync(User);
+    //         ViewBag.FullName = user.FullName;
+    //         ViewBag.Gender = user.Gender;
+    //         ViewBag.PhoneNumber = user.PhoneNumber;
+    //         ViewBag.Email = user.Email;
+    //     }
+    //     ViewBag.Categories = _context.Categories.ToList();
+    //     var posts = await _context.Posts
+    //         .Include(p => p.Owner)
+    //         .Where(p => p.CategoryId == categorieId)
+    //         .ToListAsync();
+    //     return View(posts);
+    // }
 
     public IActionResult Privacy()
     {

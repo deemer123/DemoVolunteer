@@ -374,7 +374,6 @@ D:\GitHub\DemoVolunteer\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 D:\GitHub\DemoVolunteer\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 D:\GitHub\DemoVolunteer\obj\Debug\net9.0\scopedcss\bundle\DemoVolunteer.styles.css
 D:\GitHub\DemoVolunteer\obj\Debug\net9.0\scopedcss\projectbundle\DemoVolunteer.bundle.scp.css
-D:\GitHub\DemoVolunteer\obj\Debug\net9.0\compressed\q3duruq83f-b9sayid5wm.gz
 D:\GitHub\DemoVolunteer\obj\Debug\net9.0\compressed\1e7bws4bsp-61n19gt1b8.gz
 D:\GitHub\DemoVolunteer\obj\Debug\net9.0\compressed\1n95ken4c8-xtxxf3hu2r.gz
 D:\GitHub\DemoVolunteer\obj\Debug\net9.0\compressed\7nzosr57jr-t1cqhe9u97.gz
@@ -448,3 +447,8 @@ D:\GitHub\DemoVolunteer\obj\Debug\net9.0\refint\DemoVolunteer.dll
 D:\GitHub\DemoVolunteer\obj\Debug\net9.0\DemoVolunteer.pdb
 D:\GitHub\DemoVolunteer\obj\Debug\net9.0\DemoVolunteer.genruntimeconfig.cache
 D:\GitHub\DemoVolunteer\obj\Debug\net9.0\ref\DemoVolunteer.dll
+D:\GitHub\DemoVolunteer\obj\Debug\net9.0\compressed\w7iyl0t0c8-6jryw2hlaf.gz
+D:\GitHub\DemoVolunteer\obj\Debug\net9.0\compressed\1726l4s3ww-pxq1mmvv3v.gz
+D:\GitHub\DemoVolunteer\obj\Debug\net9.0\compressed\q3duruq83f-5ipweew5fc.gz
+D:\GitHub\DemoVolunteer\obj\Debug\net9.0\compressed\8enxc9d1t1-zc6t26rob0.gz
+D:\GitHub\DemoVolunteer\obj\Debug\net9.0\compressed\zut2noc3x5-hoi4mklv9p.gz

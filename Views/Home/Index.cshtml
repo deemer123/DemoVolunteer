@@ -1,6 +1,10 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    var selectedCategoryId = ViewBag.SelectedCategoryId as int?;
+    var categories = ViewBag.Categories as List<DemoVolunteer.Models.Category>;
+    var selectedCategory = categories?.FirstOrDefault(c => c.CategoryId == selectedCategoryId);
 }
+
 
 <link rel="stylesheet" href="~/css/index.css" />
 
@@ -33,44 +37,43 @@
         <div class="selectbutton">
             @foreach (var category in @ViewBag.Categories)
             {
-                <button class="button2"><a href="/Home/Post?categorieId=@category.CategoryId">@category.Name</a></button>
+                <button class="button2"><a asp-controller="Home" asp-action="Index" asp-route-categorieId="@category.CategoryId">@category.Name</a></button>
             }
         </div>
+
+
 
         @* all post *@
         @model List<DemoVolunteer.Models.Post>
         <div class="showactivity">
             @foreach (var post in Model)
-            {
+{
+    if (selectedCategoryId == null || post.CategoryId == selectedCategoryId)
+    {
+        
+        <div class="activity">
+            <img src="@post.ImgURL" width="100px" alt="volunteer">
+            <h4>@post.Title</h4>
+            <p>
+                สถานที่: @post.Location <br>
+                วันที่: @post.AppointmentDate.ToString("d MMM yyyy", new System.Globalization.CultureInfo("th-TH")) <br>
+                เวลา: @post.TimeStart.ToString("HH:mm") - @post.TimeEnd.ToString("HH:mm") น. <br>
+                ผู้จัด: @post.Owner.FullName
+            </p>
+            <div>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <div class="activity">
-                        <img src="@post.ImgURL" width="100px" alt="volunteer">
-                        <h4>@post.Title</h4>
-                        <p>สถานที่: @post.Location <br>วันที่: @post.AppointmentDate.ToString("d MMM yyyy", new
-                                                System.Globalization.CultureInfo("th-TH")) <br>เวลา: @post.TimeStart.ToString("HH:MM") -
-                    @post.TimeEnd.ToString("HH:MM") น. <br>ผู้จัด:
-                    @post.Owner.FullName </p>
-                <div>
                     <button>เข้าร่วม</button>
-                </div>
-            </div>
-                        }
+                }
                 else
                 {
-                    <div class="activity">
-                        <img src="@post.ImgURL" width="100px" alt="volunteer">
-                        <h4>@post.Title</h4>
-                        <p>สถานที่: @post.Location <br>วันที่: @post.AppointmentDate.ToString("d MMM yyyy", new
-                                                System.Globalization.CultureInfo("th-TH")) <br>เวลา: @post.TimeStart.ToString("HH:MM") -
-                    @post.TimeEnd.ToString("HH:MM") น. <br>ผู้จัด:
-                    @post.Owner.FullName </p>
-                <div>
                     <button><a asp-controller="User" asp-action="Login">เข้าร่วม</a></button>
-                </div>
+                }
             </div>
-                        }
-            }
+        </div>
+    }
+}
+            
 
             @* next pages *@
         </div>

@@ -1,4 +1,4 @@
-@model List<DemoVolunteer.Models.Post>
+@* @model List<DemoVolunteer.Models.Post>
 <h1>จัดการโพส</h1>
 
 <p>โพสสมาชิกอื่น @Model[0].Owner.Joins.Count</p>
@@ -22,4 +22,79 @@ else{
     }
 }
 
-</ul>
+
+</ul> *@
+
+@model List<DemoVolunteer.Models.Post>
+
+<link rel="stylesheet" href="~/css/manager.css">
+<main>
+
+    <div class="content">
+
+        <h2>จัดการโพสต์กิจกรรมของฉัน</h2>
+
+        <div class="category">
+
+            <div class="category-list" id="box1">
+                <h3>โพสต์สมาขิกอื่น</h3>
+                <p>@Model[0].Owner.Joins.Count</p>
+            </div>
+
+            <div class="category-list" id="box2">
+                <h3>โพสต์ของฉัน</h3>
+                <p>@Model.Count</p>
+            </div>
+
+            <div class="category-list" id="box3">
+                <h3>โพสต์ทั้งหมด</h3>
+                <p>@(@Model[0].Owner.Joins.Count + @Model.Count)</p>
+            </div>
+
+        </div>
+
+        <div class="btn-addPost">
+            <div class="addPost"><a asp-controller="Post" asp-action="Create">เพิ่มโพสต์</a></div>
+        </div>
+
+
+        <div class="event-list">
+
+            <div class="entire-event">
+                รายการจิตอาสาที่ฉันสร้าง
+            </div>
+
+            <div>
+
+                <div class="field-row header">
+                    <div>วันที่สร้าง</div>
+                    <div>งานอาสา</div>
+                    <div>จำนวนที่รับ</div>
+                    <div>แก้ไขโพสต์</div>
+                    <div>ลบโพสต์</div>
+                    <div>ปิดการรับสมัคร</div>
+                </div>
+                @foreach (Post post in Model)
+                {
+                    <div class="field-row">
+                        <div>@post.CreatedAt?.ToString("d MMM yyyy", new System.Globalization.CultureInfo("th-TH"))</div>
+                        <div>@post.Title</div>
+                        <div class="member">
+                            @post.AmountParticipant / @post.MaxParticipants คน
+                            <div class="btn-member">ดูสมาชิก</div>
+                        </div>
+                        <div class="btn-edit">แก้ไข</div>
+                        <div class="btn-delete">ลบ</div>
+                        <div class="status-post">เปิด</div>
+                    </div>
+                }
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
