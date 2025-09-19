@@ -2,18 +2,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-@if (User?.Identity != null && User.Identity.IsAuthenticated)
-{
-    <h3>Hello, @ViewBag.FullName!</h3>
-    <p>Gender @ViewBag.Gender</p>
-    <p>PhoneNumber @ViewBag.phoneNumber</p>
-    <p>Email @ViewBag.Email</p>
-}
-else
-{
-    <span>Hello, Guest</span>
-}
-
+@* (User?.Identity != null && User.Identity.IsAuthenticated) *@
 
 <h2>เลือกหมวดหมู่</h2>
 <div>

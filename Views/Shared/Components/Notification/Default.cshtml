@@ -1,12 +1,13 @@
-@model List<Notification>
+@* @model List<Notification> *@
+@model List<DemoVolunteer.Models.Notification>
 
 @if (Model == null || Model.Count == 0){
-   <p>ไม่มีการแจ้งเตือน</p> 
+   <div class="dropdown-item">ไม่มีการแจ้งเตือน</div>
 }else{
     @foreach (var notify in Model){
-        <p>
+        <div class="dropdown-item">
             @notify.Message
             @notify.CreatedAt.ToString("dd/MM/yyyy HH:mm")
-        </p>
+        </div>
     }
 }

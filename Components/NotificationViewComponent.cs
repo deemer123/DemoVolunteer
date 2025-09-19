@@ -25,8 +25,9 @@ public class NotificationViewComponent : ViewComponent
         }
         var notifications = await _context.Notifications
             .Where(n => n.UserId == user.Id)
+            .Where(n => n.IsRead == false)
             .OrderByDescending(n => n.CreatedAt)
-            .Take(5)
+            // .Take(5)
             .ToListAsync();
         return View(notifications);
     }

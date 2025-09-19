@@ -45,9 +45,10 @@ public class UserController : Controller
         var result = await _userManager.CreateAsync(user, password);
         if (result.Succeeded)
         {
-            // await _signInManager.SignInAsync(user, false);
-            ViewBag.Message = "สมัครสมาชิกสำเร็จแล้ว! ตอนนี้คุณสามารถเข้าสู่ระบบได้";
-            return View();
+            // แสดงในข้อความแจ้งเตือนใน pop up ที่ Redirect ไป
+            TempData["PopupMessage"] = "สมัครสมาชิกสำเร็จ!";
+            TempData["PopupType"] = "success"; // success, error, inf
+            return RedirectToAction("Index", "Home");
         }
         foreach (var error in result.Errors)
         {
@@ -57,17 +58,18 @@ public class UserController : Controller
         return View();
     }
 
-
     // Login
     [HttpGet]
     public IActionResult Login() => View();
-
     [HttpPost]
     public async Task<IActionResult> Login(string email, string password)
     {
         var result = await _signInManager.PasswordSignInAsync(email, password, false, false);
         if (result.Succeeded)
         {
+            // แสดงในข้อความแจ้งเตือนใน pop up ที่ Redirect ไป
+            TempData["PopupMessage"] = "เข้าสู่ระบบสำเร็จ!";
+            TempData["PopupType"] = "success"; // success, error, inf
             return RedirectToAction("Index", "Home");
         }
         // กรณี login ไม่สำเร็จ
@@ -80,10 +82,11 @@ public class UserController : Controller
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
+        // แสดงในข้อความแจ้งเตือนใน pop up ที่ Redirect ไป
+            TempData["PopupMessage"] = "ออกจากระบบเรียบร้อย!";
+            TempData["PopupType"] = "success"; // success, error, inf
         return RedirectToAction("Index", "Home");
     }
-
-
 
 
     // GET Login User: Edit Profile
@@ -116,12 +119,6 @@ public class UserController : Controller
     [HttpPost]
     public async Task<IActionResult> Edit(UserViewModel model)
     {
-        Console.WriteLine($"{model.FirstName}");
-        Console.WriteLine($"{model.LastName}");
-        Console.WriteLine($"{model.Gender}");
-        Console.WriteLine($"{model.PhoneNumber}");
-        Console.WriteLine($"{model.Email}");
-        Console.WriteLine($"{model.UserName}");
         // if (!ModelState.IsValid) return View(model);
         if (!ModelState.IsValid)
         {
@@ -133,13 +130,8 @@ public class UserController : Controller
             // debug ดู errors
             return Json(errors);
         }
-     
-        
-
         var user = await _userManager.GetUserAsync(User);
         if (user == null) return RedirectToAction("Login", "User");
-        
-
         // อัปเดตค่าจากฟอร์ม
         user.FirstName = model.FirstName;
         user.LastName = model.LastName;
@@ -152,15 +144,17 @@ public class UserController : Controller
 
         if (result.Succeeded)
         {
-            Console.WriteLine($"แก้ไข้เรียบร้อย");
-            return RedirectToAction("Index", "Home");
+            // แสดงในข้อความแจ้งเตือนใน pop up ที่ Redirect ไป
+            TempData["PopupMessage"] = "แก้ไขข้อมูลสำเร็จ!";
+            TempData["PopupType"] = "success"; // success, error, inf
+            return View();
         }
         // ถ้ามี error
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError("", error.Description);
         }
-
         return View(model);
     }
+
 }

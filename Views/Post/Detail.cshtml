@@ -16,4 +16,20 @@
 <p>รายละเอียดกิจกรมม</p>
 <p>@Model.Description</p>
 
-<button>เข้าร่วมจิตอาสา</button>
+<form method="POST" asp-action="Join">
+    <input type="hidden" name="postId" value=@Model.PostId>
+    @if(Model.Status == "Open"){
+        <button type="submit">เข้าร่วมจิตอาสา</button>
+    }
+    else if(Model.Status == "Full"){
+        <button type="submit" disabled>สมาชิกเต็ม</button>
+    }
+    else if(Model.Status == "Closed"){
+        <button type="submit" disabled>ปิดการรับสมาชิก</button>
+    }
+    else if(Model.Status == "Expired"){
+        <button type="submit" disabled>โพสต์หมดอายุแล้ว</button>
+    }
+</form>
+
+

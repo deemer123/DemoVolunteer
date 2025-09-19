@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MyMvcProject.Controllers
 {
-    
-    [ApiController]
-    [Route("api/Test")]
+    //Controller ไว้ทดสอบ
+    // [ApiController]
+    // [Route("api/Test")]
     public class TestController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -18,6 +18,17 @@ namespace MyMvcProject.Controllers
         {
             _context = context;
             _userManager = userManager;
+        }
+
+        private Notification notificationModel(string userId, string message)
+        {
+            var notification = new Notification
+            {
+                UserId = userId,
+                Message = message,
+                IsRead = false
+            };
+            return notification;
         }
 
         private string GetProfileImage()
@@ -87,11 +98,22 @@ namespace MyMvcProject.Controllers
         // ต้อง await _context.SaveChangesAsync() ทุกครั้งที่แก้ไขข้อมูล
 
         // Try Test
+        public async Task<IActionResult> AddNofi(){
+            var user = await _userManager.GetUserAsync(User);
+            var notification = new Notification
+            {
+                UserId = user.Id,
+                Message = "แจ้งเตือนจ้า!!!",
+                IsRead = false
+            };
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+            return Content($"Add notification To {user.FullName}");
+        }
 
         // CreatePost View
         [HttpGet]
         public IActionResult CreatePost() => View();
-
         [HttpPost]
         public async Task<IActionResult> CreatePost(Post model)
         {

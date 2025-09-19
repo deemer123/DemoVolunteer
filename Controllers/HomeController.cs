@@ -19,6 +19,7 @@ public class HomeController : Controller
         _userManager = userManager; // ใช้ _userManager ดึงข้อมูล user        
     }
 
+    //หน้าแรกแสดงโพสทั้งหมด
     public async Task<IActionResult> Index()
     {
         if (User.Identity.IsAuthenticated)
@@ -30,18 +31,16 @@ public class HomeController : Controller
             ViewBag.Email = user.Email;
         }
 
-        // var categories = await _context.Categories.ToListAsync();
-        // ViewBag.categories = categories;
-
         //ส่งข้อมูล Categories ไปที่ View ผ่าน ViewBag
         ViewBag.Categories = _context.Categories.ToList();
         var posts = await _context.Posts
             .Include(p => p.Owner)
+            .Where(p => p.IsActive == true)
             .ToListAsync();
         return View(posts);
     }
 
-    
+    //หน้าแสดงโพสตามหมวดหมู่
     public async Task<IActionResult> Post(int categorieId)
     {
         if (User.Identity.IsAuthenticated)
@@ -56,14 +55,11 @@ public class HomeController : Controller
         var posts = await _context.Posts
             .Include(p => p.Owner)
             .Where(p => p.CategoryId == categorieId)
+            .Where(p => p.IsActive == true)
             .ToListAsync();
         return View(posts);
     }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
