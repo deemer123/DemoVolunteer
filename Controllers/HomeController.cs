@@ -49,25 +49,6 @@ public class HomeController : Controller
 
     }
 
-
-    // public async Task<IActionResult> Post(int categorieId)
-    // {
-    //     if (User.Identity.IsAuthenticated)
-    //     {
-    //         var user = await _userManager.GetUserAsync(User);
-    //         ViewBag.FullName = user.FullName;
-    //         ViewBag.Gender = user.Gender;
-    //         ViewBag.PhoneNumber = user.PhoneNumber;
-    //         ViewBag.Email = user.Email;
-    //     }
-    //     ViewBag.Categories = _context.Categories.ToList();
-    //     var posts = await _context.Posts
-    //         .Include(p => p.Owner)
-    //         .Where(p => p.CategoryId == categorieId)
-    //         .ToListAsync();
-    //     return View(posts);
-    // }
-
     public IActionResult Privacy()
     {
         return View();
