@@ -1,8 +1,14 @@
 @model DemoVolunteer.Models.Post
 
 <form method="POST" asp-action="Create" asp-controller="Post" enctype="multipart/form-data">
+    <h1>เพิ่มโพสต์กิจกรรมจิตอาสา</h1>
+
+    <label for="img">อัปโหลดรูปภาพ:</label>
+    <input type="file" id="imageInput" accept="image/*" name="imageFile"/>
+    <img id="preview" src="/img/default-post-image.png" alt="Image Preview" width="500" height="600" style="display: block;">
+
     <label for="title" >ชื่อหัวเรือง</label>
-    <input asp-for="Title" type="text" name="title" placeholder="title"  />
+    <input asp-for="Title" type="text" name="title" placeholder="title" required/>
 
     <label for="CategoryId">เลือกประเภท:</label>
     <select asp-for="CategoryId" name="CategoryId">        
@@ -12,36 +18,37 @@
     </select>
 
     <label for="location">สถาที่นัดหมาย:</label>
-    <input asp-for="Location" type="text" name="location" placeholder="location"  />
+    <input asp-for="Location" type="text" name="Location" placeholder="Location" required />
 
     <label for="category">จำนวนที่รับ:</label>
-    <input asp-for="MaxParticipants" type="number" name="MaxParticipants" placeholder="MaxParticipants"  />
+    <input asp-for="MaxParticipants" type="number" name="MaxParticipants" placeholder="MaxParticipants" required/>
 
     <label for="Description">ลายละเอียด:</label>
-    <textarea asp-for="Description" placeholder="textarea"></textarea>
+    <textarea asp-for="Description" placeholder="textarea" ></textarea>
+
     <label for="date">วันที่นัด:</label>
-    <input asp-for="AppointmentDate" type="date" name="date" placeholder="date"  />
+    <input asp-for="AppointmentDate" type="date" id="AppointmentDate" name="AppointmentDate" required/>
 
-    <label for="timestart">เริ่มเวลา:</label>
-    <input asp-for="TimeStart" type="time" name="timestart" placeholder="time"  />
+    <label for="TimeStart">เริ่มเวลา:</label>
+    <input asp-for="TimeStart" type="time" name="TimeStart" required/>
 
-    <label for="timeend">จบที่เวลา:</label>
-    <input asp-for="TimeEnd" type="time" name="timeend" placeholder="time"  />
+    <label for="TimeEnd">จบที่เวลา:</label>
+    <input asp-for="TimeEnd" type="time" name="TimeEnd" required/>
 
     <label for="score">จำนวนชั่วโมง:</label>
-    <input asp-for="Score" type="number" name="score" placeholder="score" />
+    <input asp-for="Score" type="number" name="score" placeholder="score" required/>
 
     <hr/>
+    @* <!-- Hidden field สำหรับ ImgURL -->
+    <input type="hidden" asp-for="ImgURL" /> *@
 
-    <!-- Hidden field สำหรับ ImgURL -->
-    <input type="hidden" asp-for="ImgURL" />
+    <label for="img">อัปโหลดรูปภาพกิจกรรม:</label>
+    <input type="file" accept="image/*" name="imageFile2"/>
 
+    <label for="dateEnd">เวลาปิดโพสต์กิจกรรม:</label>
+    <input asp-for="AppointmentDateEnd"  type="date" id="AppointmentDateEnd" name="AppointmentDateEnd" required/>
 
-    <label for="img">อัปโหลดรูปภาพ:</label>
-    <input type="file" id="imageInput" accept="image/*" name="imageFile"/>
-    <img id="preview" src="/img/default-post-image.png" alt="Image Preview" width="500" height="600" style="display: block;">
-
-    <button type="submit">สร้างโพส</button>
+    <button type="submit" formnovalidate>สร้างโพส</button>
 </form>
 
 <script>

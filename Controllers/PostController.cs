@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using DemoVolunteer.Data;
 using DemoVolunteer.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Text.Json;
 
 namespace MyMvcProject.Controllers
 {
@@ -42,13 +43,30 @@ namespace MyMvcProject.Controllers
 
         // รับข้อมูลจาก Form Create Post และ newPost ลงใน DB
         [HttpPost]
-        public async Task<IActionResult> Create(Post model, IFormFile imageFile)
+        public async Task<IActionResult> Create(Post model, IFormFile imageFile, IFormFile imageFile2)
         {
             var user = await _userManager.GetUserAsync(User);
             if (model == null || user == null)
             {
                 return Content("Model is null");
             }
+
+            // ถ้ามีการอัปภาพเข้ารวมกิจกรรม
+            if (imageFile2 != null && imageFile2.Length > 0)
+            {
+                var fileName2 = $"appointImg-{Guid.NewGuid()}{Path.GetExtension(imageFile2.FileName)}";
+                var path2 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", fileName2);
+                using (var stream = new FileStream(path2, FileMode.Create))
+                {
+                    await imageFile2.CopyToAsync(stream);
+                }
+                model.AppointImg = "/img/" + fileName2; // สมมุติว่ามี field นี้ใน Model
+            }
+            else
+            {
+                model.AppointImg = null;
+            }
+            // ถ้ามีการอัปภาพกิจกรรม
             if (imageFile != null && imageFile.Length > 0)
             {
                 // ตั้งชื่อไฟล์เอง เช่น ใช้ชื่อจาก Model หรือเวลาปัจจุบัน
@@ -82,8 +100,14 @@ namespace MyMvcProject.Controllers
                 Score = model.Score,
                 Status = "Open",
                 ImgURL = model.ImgURL,
+                AppointImg = model.AppointImg,
+                AppointmentDateEnd = model.AppointmentDateEnd,
                 CreatedAt = DateTime.Now
             };
+            
+            // var json = JsonSerializer.Serialize(newPost);
+            // Console.WriteLine(json); // หรือ Debug.WriteLine(json);
+
             // เพิ่มลงใน DB
             _context.Posts.Add(newPost);
             await _context.SaveChangesAsync();
@@ -126,7 +150,7 @@ namespace MyMvcProject.Controllers
 
         // ดำเนินการแก้ไขข้อมูล post
         [HttpPost]
-        public async Task<IActionResult> Edit(Post model, IFormFile imageFile)
+        public async Task<IActionResult> Edit(Post model, IFormFile imageFile, IFormFile imageFile2)
         {
             var user = await _userManager.GetUserAsync(User);
             var post = await _context.Posts.FindAsync(model.PostId); // ดึงรายการเดียวตาม PostId
@@ -135,6 +159,22 @@ namespace MyMvcProject.Controllers
             {
                 return Content("Model is null");
             }
+            // ถ้ามีการแก้ไขภาพเข้ารวมกิจกรรม
+            if (imageFile2 != null && imageFile2.Length > 0)
+            {
+                var fileName2 = $"appointImg-{Guid.NewGuid()}{Path.GetExtension(imageFile2.FileName)}";
+                var path2 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", fileName2);
+                using (var stream = new FileStream(path2, FileMode.Create))
+                {
+                    await imageFile2.CopyToAsync(stream);
+                }
+                model.AppointImg = "/img/" + fileName2; // สมมุติว่ามี field นี้ใน Model
+            }
+            else
+            {
+                model.AppointImg = null;
+            }
+            // ถ้ามีการแก้ไขภาพกิจกรรม
             if (imageFile != null && imageFile.Length > 0)
             {
                 // ตั้งชื่อไฟล์เอง เช่น ใช้ชื่อจาก Model หรือเวลาปัจจุบัน
@@ -165,7 +205,13 @@ namespace MyMvcProject.Controllers
             post.TimeEnd = model.TimeEnd;
             post.Score = model.Score;
             post.ImgURL = model.ImgURL;
+            post.AppointImg = model.AppointImg;
+            post.AppointmentDateEnd = model.AppointmentDateEnd;
             await _context.SaveChangesAsync();
+            
+
+            Console.WriteLine($"วันที่ที่รับมา: {model.AppointmentDate}");
+            Console.WriteLine($"วันที่ปิดที่รับมา: {model.AppointmentDateEnd}");
             // แสดงในข้อความแจ้งเตือนใน pop up ที่ Redirect ไป
             TempData["PopupMessage"] = $"แก้ไขโพสตแล้ว!!";
             TempData["PopupType"] = "success"; // success, error, inf
