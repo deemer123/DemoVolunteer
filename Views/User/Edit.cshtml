@@ -4,7 +4,13 @@
 }
 <h2>Edit</h2>
 
-<form asp-controller="User" asp-action="Edit" method="post">
+<form asp-controller="User" asp-action="Edit" method="post" enctype="multipart/form-data">
+
+
+    <label for="img">อัปเดตโปรไฟล</label>
+    <input type="file" id="imageInput" accept="image/*" name="imageFile"/>
+    <img id="preview" src=@Model.ImgURL alt="ImageProfile" width="200" style="display: block;">
+ 
     <div>
         <label asp-for="FirstName">FirstName</label>
         <input value="@Model.FirstName" asp-for="FirstName"/>
@@ -31,4 +37,24 @@
 </form>
 
 
-}
+
+<script>
+    const imageInput = document.getElementById('imageInput');
+    const preview = document.getElementById('preview');
+
+    imageInput.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+

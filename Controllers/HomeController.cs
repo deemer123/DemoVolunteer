@@ -60,6 +60,18 @@ public class HomeController : Controller
         return View(posts);
     }
 
+    //ค้นหา post ตามชื่อ title
+    public async Task<IActionResult> Search(string keyword)
+    {
+        ViewBag.Categories = _context.Categories.ToList();
+        var posts = await _context.Posts
+                .Include(p => p.Owner)
+                .Where(p => p.Title.Contains(keyword) == true)
+                .Where(p => p.IsActive == true)
+                .ToListAsync();
+        return View(posts);
+    }
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

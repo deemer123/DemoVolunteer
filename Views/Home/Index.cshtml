@@ -4,6 +4,12 @@
 
 @* (User?.Identity != null && User.Identity.IsAuthenticated) *@
 
+<form asp-action="Search" asp-controller="Home" method="get">
+    <input type="text" name="keyword" id="keyword">
+    <button type="submit">ค้นหา</button>
+</form>
+<hr/>
+
 <h2>เลือกหมวดหมู่</h2>
 <div>
     <a href="/Home">ทั้งหมด</a>

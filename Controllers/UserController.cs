@@ -40,7 +40,8 @@ public class UserController : Controller
             Email = email,
             PhoneNumber = phoneNumber,
             FirstName = firstName,
-            LastName = lastName
+            LastName = lastName,
+            ImgURL = "/img/default-profile.png"
         };
         var result = await _userManager.CreateAsync(user, password);
         if (result.Succeeded)
@@ -107,19 +108,15 @@ public class UserController : Controller
             Gender = user.Gender,
             UserName = user.UserName,
             Email = user.Email,
-            PhoneNumber = user.PhoneNumber
+            PhoneNumber = user.PhoneNumber,
+            ImgURL = user.ImgURL
         };
-        // ใช้ ViewBag ส่งค่าไปที่ view ก็ได้
-        // ViewBag.FirstName = user.FirstName;
-        // ViewBag.LastName = user.LastName;
-
         return View(model);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(UserViewModel model)
+    public async Task<IActionResult> Edit(UserViewModel model, IFormFile? imageFile)
     {
-        // if (!ModelState.IsValid) return View(model);
         if (!ModelState.IsValid)
         {
             var errors = ModelState.Values
@@ -132,6 +129,22 @@ public class UserController : Controller
         }
         var user = await _userManager.GetUserAsync(User);
         if (user == null) return RedirectToAction("Login", "User");
+        if (imageFile != null && imageFile.Length > 0)
+        {
+            // ตั้งชื่อไฟล์เอง เช่น ใช้ชื่อจาก Model หรือเวลาปัจจุบัน
+            var customFileName = $"profile_{user.Id}_" + Path.GetExtension(imageFile.FileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", customFileName);
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream);
+            }
+            // กำหนด ImgURL ใน Model เป็น path สำหรับแสดงภาพ
+            model.ImgURL = "/img/" + customFileName;
+        }
+        else
+        {
+            model.ImgURL = user.ImgURL;
+        }
         // อัปเดตค่าจากฟอร์ม
         user.FirstName = model.FirstName;
         user.LastName = model.LastName;
@@ -139,6 +152,7 @@ public class UserController : Controller
         user.PhoneNumber = model.PhoneNumber;
         user.UserName = model.UserName;
         user.Email = model.Email;
+        user.ImgURL = model.ImgURL;
 
         var result = await _userManager.UpdateAsync(user);
 
@@ -147,7 +161,7 @@ public class UserController : Controller
             // แสดงในข้อความแจ้งเตือนใน pop up ที่ Redirect ไป
             TempData["PopupMessage"] = "แก้ไขข้อมูลสำเร็จ!";
             TempData["PopupType"] = "success"; // success, error, inf
-            return View();
+            return RedirectToAction("Edit","User");
         }
         // ถ้ามี error
         foreach (var error in result.Errors)
